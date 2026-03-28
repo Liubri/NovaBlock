@@ -2,7 +2,7 @@
 
 # NovaBlock
 
-Brief description of the project 
+A lightweight blockchain implementation built in Python, exploring distributed consensus through a minimal peer-to-peer network.
 
 ---
 
