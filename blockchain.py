@@ -6,33 +6,33 @@ class Blockchain:
 
     def __init__(self):
         """
-        Initialise the chain with the hardcoded genesis block.
-        The genesis block has no real previous hash — it uses a string of
+        Initialise the chain with the hardcoded StellarOrigin block.
+        The StellarOrigin block has no real previous hash — it uses a string of
         64 zeros as a sentinel value, as specified in the system design.
         """
         self.chain = []
-        self._create_genesis_block()
+        self._create_stellar_origin()
 
     # ------------------------------------------------------------------
-    # Genesis block
+    # StellarOrigin block
     # ------------------------------------------------------------------
 
-    def _create_genesis_block(self):
+    def _create_stellar_origin(self):
         """
-        Build and mine the genesis block (index=0).
+        Build and mine the StellarOrigin block (index=0).
         It is hardcoded with:
           - an empty transaction list
           - previous_hash of "0" * 64
           - timestamp fixed to 0 so every node produces the identical block
         """
-        genesis = Block(
+        stellar_origin = Block(
             index=0,
             transactions=[],
             previous_hash="0" * 64,
             timestamp=0,
         )
-        genesis.hash = self._mine_block(genesis)
-        self.chain.append(genesis)
+        stellar_origin.hash = self._mine_block(stellar_origin)
+        self.chain.append(stellar_origin)
 
     # ------------------------------------------------------------------
     # Properties
@@ -184,7 +184,7 @@ class Blockchain:
         Returns:
             Blockchain: A new Blockchain instance with the reconstructed chain.
         """
-        bc = cls.__new__(cls)   # skip __init__ so we don't auto-create genesis
+        bc = cls.__new__(cls)   # skip __init__ so we don't auto-create StellarOrigin
         bc.chain = [Block.from_dict(b) for b in chain_data]
         return bc
 
@@ -192,17 +192,14 @@ class Blockchain:
         return f"<Blockchain height={self.height} tip={self.last_block.hash[:12]}...>"
 
 
-
-
-
 # ------------------------------------------------------------------ #
 #  Quick demo                                                        #
 # ------------------------------------------------------------------ #
 
 if __name__ == "__main__":
-    print("=== Initialising blockchain (genesis block will be mined) ===\n")
+    print("=== Initialising blockchain (StellarOrigin block will be mined) ===\n")
     bc = Blockchain()
-    print(f"Genesis block: {bc.last_block}\n")
+    print(f"StellarOrigin block: {bc.last_block}\n")
 
     # --- Mine block 1 ---
     print("=== Mining block 1 ===")
@@ -232,3 +229,6 @@ if __name__ == "__main__":
     print("\n=== Tampering with block 1 (simulate attack) ===")
     bc.chain[1].transactions = [{"sender": "Eve", "recipient": "Eve", "amount": 9999}]
     print(f"Chain valid after tamper: {bc.is_chain_valid()}")
+    print("=== Full chain after tamper ===")
+    for block in bc.chain:
+        print(f"  [{block.index}] hash={block.hash[:16]}...  prev={block.previous_hash[:16]}...  txns={len(block.transactions)}")
