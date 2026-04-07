@@ -191,7 +191,6 @@ class Blockchain:
     def __repr__(self):
         return f"<Blockchain height={self.height} tip={self.last_block.hash[:12]}...>"
 
-
 # ------------------------------------------------------------------ #
 #  Quick demo                                                        #
 # ------------------------------------------------------------------ #
