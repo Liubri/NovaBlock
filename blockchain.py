@@ -190,3 +190,45 @@ class Blockchain:
 
     def __repr__(self):
         return f"<Blockchain height={self.height} tip={self.last_block.hash[:12]}...>"
+
+
+
+
+
+# ------------------------------------------------------------------ #
+#  Quick demo                                                        #
+# ------------------------------------------------------------------ #
+
+if __name__ == "__main__":
+    print("=== Initialising blockchain (genesis block will be mined) ===\n")
+    bc = Blockchain()
+    print(f"Genesis block: {bc.last_block}\n")
+
+    # --- Mine block 1 ---
+    print("=== Mining block 1 ===")
+    block1 = bc.mine_pending_transactions([
+        {"sender": "Alice",   "recipient": "Bob",     "amount": 50},
+        {"sender": "Bob",     "recipient": "Charlie", "amount": 25},
+    ])
+    print(f"Result: {block1}\n")
+
+    # --- Mine block 2 ---
+    print("=== Mining block 2 ===")
+    block2 = bc.mine_pending_transactions([
+        {"sender": "Charlie", "recipient": "Alice",   "amount": 10},
+    ])
+    print(f"Result: {block2}\n")
+
+    # --- Print full chain ---
+    print("=== Full chain ===")
+    for block in bc.chain:
+        print(f"  [{block.index}] hash={block.hash[:16]}...  prev={block.previous_hash[:16]}...  txns={len(block.transactions)}")
+
+    # --- Validate ---
+    print(f"\nChain valid: {bc.is_chain_valid()}")
+    print(repr(bc))
+
+    # --- Tamper detection demo ---
+    print("\n=== Tampering with block 1 (simulate attack) ===")
+    bc.chain[1].transactions = [{"sender": "Eve", "recipient": "Eve", "amount": 9999}]
+    print(f"Chain valid after tamper: {bc.is_chain_valid()}")
