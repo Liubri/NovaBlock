@@ -165,5 +165,56 @@ class Network:
         """Return peers as a sorted list for consistent API responses."""
         return sorted(self.peers)
 
+    # ------------------------------------------------------------------
+    # Specific broadcast methods for blocks and transactions
+    # ------------------------------------------------------------------
+
+    def broadcast_block(self, block_dict):
+        """
+        Broadcast a mined block to all known peers via POST /blocks/new.
+
+        Args:
+            block_dict (dict): Block data to broadcast.
+
+        Returns:
+            list: Peer URLs that accepted the block.
+        """
+        return self.broadcast_post("/blocks/new", block_dict)
+
+    def broadcast_transaction(self, transaction_dict):
+        """
+        Broadcast a transaction to all known peers via POST /transactions/new.
+
+        Args:
+            transaction_dict (dict): Transaction data to broadcast.
+
+        Returns:
+            list: Peer URLs that accepted the transaction.
+        """
+        return self.broadcast_post("/transactions/new", transaction_dict)
+
+    def fetch_chain(self, peer_url):
+        """
+        Fetch the full blockchain from a specific peer.
+
+        Args:
+            peer_url (str): URL of the peer to fetch from.
+
+        Returns:
+            dict: Response from GET /chain, or None on failure.
+        """
+        url = f"{peer_url}/chain"
+        try:
+            response = requests.get(url, timeout=5)
+            if response.status_code == 200:
+                print(f"[Network] Fetched chain from {peer_url}")
+                return response.json()
+            else:
+                print(f"[Network] Failed to fetch chain from {peer_url}: {response.status_code}")
+                return None
+        except requests.exceptions.RequestException as e:
+            print(f"[Network] Failed to fetch chain from {peer_url}: {e}")
+            return None
+
     def __repr__(self):
         return f"<Network peers={self.peer_count}>"
