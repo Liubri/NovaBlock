@@ -14,7 +14,7 @@ class BlockchainClient:
         self.timeout = 5
 
     def _request(self, method: str, endpoint: str, json_data=None):
-        """Make HTTP request, handle errors gracefully."""
+        """Make HTTP request and handle errors"""
         url = f"{self.node_url}{endpoint}"
         try:
             if method == 'GET':
@@ -69,7 +69,7 @@ class BlockchainClient:
         pending = result.get('pending', [])
         print(f"\n=== Mempool ({len(pending)} pending) ===")
         for tx in pending:
-            print(f"  {tx['sender']} → {tx['recipient']}: {tx['amount']}")
+            print(f"  {tx.get('sender','?')} → {tx.get('recipient','?')}: {tx.get('amount','?')}")
         print()
 
     def print_peers(self, result: dict):
@@ -111,12 +111,12 @@ def main():
     if args.command == 'submit-tx':
         result = client.submit_transaction(args.sender, args.recipient, args.amount)
         if result:
-            print(f"✓ Transaction submitted: {result.get('tx_id', 'unknown')[:16]}...")
+            print(f"Transaction submitted: {result.get('tx_id', 'unknown')[:16]}...")
 
     elif args.command == 'mine':
         result = client.mine()
         if result:
-            print(f"✓ Block mined: {result['hash'][:16]}...")
+            print(f"Block mined: {result['hash'][:16]}...")
 
     elif args.command == 'get-chain':
         result = client.get_chain()
@@ -136,12 +136,12 @@ def main():
     elif args.command == 'register-peers':
         result = client.register_peers(args.peers)
         if result:
-            print(f"✓ Peers registered")
+            print(f"Peers registered")
 
     elif args.command == 'resolve':
         result = client.resolve()
         if result:
-            print(f"✓ Consensus: height={result.get('height')}")
+            print(f"Consensus: height={result.get('height')}")
 
 
 if __name__ == '__main__':
