@@ -3,15 +3,15 @@
 test_network.py: Automated two-node test for the system
 
 Setup (3 terminals):
-    Terminal 1:  python node.py --port 5000
-    Terminal 2:  python node.py --port 5001 --seed-peers http://localhost:5000
+    Terminal 1:  python node.py --port 3000
+    Terminal 2:  python node.py --port 5001 --seed-peers http://localhost:3000
     Terminal 3:  python test_network.py
 """
 
 import sys
 from client import BlockchainClient
 
-NODE_A = "http://localhost:5000"
+NODE_A = "http://localhost:3000"
 NODE_B = "http://localhost:5001"
 
 passed = 0
@@ -40,15 +40,15 @@ def test_connectivity(a, b):
     section("1. Connectivity")
 
     chain_a = a.get_chain()
-    if not check("Node A reachable (port 5000)", chain_a is not None):
+    if not check("Node A reachable (port 3000)", chain_a is not None):
         print("\n  Node A is not running. Start it with:")
-        print("    python node.py --port 5000")
+        print("    python node.py --port 3000")
         sys.exit(1)
 
     chain_b = b.get_chain()
     if not check("Node B reachable (port 5001)", chain_b is not None):
         print("\n  Node B is not running. Start it with:")
-        print("    python node.py --port 5001 --seed-peers http://localhost:5000")
+        print("    python node.py --port 5001 --seed-peers http://localhost:3000")
         sys.exit(1)
 
     check("Node A starts at height 1 (StellarOrigin only)",
