@@ -144,11 +144,11 @@ class Network:
 
     @property
     def peer_count(self):
-        """Return the number of currently registered peers."""
+        """Return the number of registered peers"""
         return len(self.peers)
 
     def peer_list(self):
-        """Return peers as a sorted list for consistent API responses."""
+        """Return peers as a sorted list for consistent ordering in API responses"""
         return sorted(self.peers)
 
     # Specific broadcast methods for blocks and transactions

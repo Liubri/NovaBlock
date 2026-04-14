@@ -9,8 +9,7 @@ class Mempool:
         Initialise an empty mempool
 
         Transactions are stored in a dict keyed by their deterministic ID
-        (SHA-256 of the transaction contents) to allow O(1) deduplication
-        and removal.
+        (the SHA-256 of transaction contents) to prevent dupliucates
         """
         self._pool = {}   # { tx_id: transaction_dict }
 
@@ -39,7 +38,7 @@ class Mempool:
             transaction (dict): Transaction with at least sender, recipient, amount
 
         Returns:
-            str | None: The transaction ID if added, None if it was a duplicate.
+            str | None: The transaction ID if added, None if it was a duplicate
         """
         tx_id = self._tx_id(transaction)
 
@@ -57,7 +56,7 @@ class Mempool:
         mined into a block
 
         Args:
-            transactions (list): The transaction dicts included in a mined block.
+            transactions (list): The transaction dicts included in a mined block
         """
         for tx in transactions:
             tx_id = self._tx_id(tx)
@@ -104,13 +103,13 @@ class Mempool:
 
     @property
     def size(self):
-        """Return the number of pending transactions."""
+        """Return the number of pending transactions"""
         return len(self._pool)
 
     # Serialisation helpers
 
     def to_list(self):
-        """Return pending transactions as a list of dicts for API responses."""
+        """Return pending transactions as a list of dicts for API responses"""
         return self.get_all()
 
     def __repr__(self):
