@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-Client: CLI tool for interacting with NovaBlock nodes
+client.py: CLI tool for interacting with NovaBlock nodes.
 """
 
 import argparse
@@ -10,11 +10,29 @@ import sys
 
 class BlockchainClient:
     def __init__(self, node_url: str):
+        """
+        Initialise the client pointed at a single NovaBlock node.
+
+        Args:
+            node_url (str): Base URL of the target node e.g. "http://localhost:5000".
+        """
         self.node_url = node_url.rstrip('/')
         self.timeout = 5
 
+    # HTTP helpers
+
     def _request(self, method: str, endpoint: str, json_data=None):
-        """Make HTTP request and handle errors"""
+        """
+        Send an HTTP request to the node and return the parsed JSON response.
+
+        Args:
+            method    (str):  HTTP verb — "GET" or "POST".
+            endpoint  (str):  API path e.g. "/chain".
+            json_data (dict): Optional JSON payload for POST requests.
+
+        Returns:
+            dict | None: Parsed JSON response body, or None on error.
+        """
         url = f"{self.node_url}{endpoint}"
         try:
             if method == 'GET':
@@ -34,30 +52,65 @@ class BlockchainClient:
             print(f"Error: {e}")
             return None
 
+    # API wrappers
+
     def get_chain(self):
+        """Fetch the full blockchain from the node."""
         return self._request('GET', '/chain')
 
     def mine(self):
+        """Trigger the node to mine all pending mempool transactions."""
         return self._request('POST', '/mine')
 
     def submit_transaction(self, sender: str, recipient: str, amount: float):
+        """
+        Submit a new transaction to the node's mempool.
+
+        Args:
+            sender    (str):   Sender identifier.
+            recipient (str):   Recipient identifier.
+            amount    (float): Amount to transfer.
+
+        Returns:
+            dict | None: Response containing tx_id, or None on error.
+        """
         data = {'sender': sender, 'recipient': recipient, 'amount': amount}
         return self._request('POST', '/transactions/new', json_data=data)
 
     def get_mempool(self):
+        """Fetch all pending transactions from the node's mempool."""
         return self._request('GET', '/mempool')
 
     def get_peers(self):
+        """Fetch the list of known peer nodes."""
         return self._request('GET', '/peers')
 
     def register_peers(self, peer_urls: list):
+        """
+        Register one or more peer nodes with the target node.
+
+        Args:
+            peer_urls (list): List of peer base URLs to register.
+
+        Returns:
+            dict | None: Response containing the updated peer list, or None on error.
+        """
         data = {'nodes': peer_urls}
         return self._request('POST', '/nodes/register', json_data=data)
 
     def resolve(self):
+        """Trigger the longest-chain consensus resolution on the node."""
         return self._request('POST', '/nodes/resolve')
 
+    # Display helpers
+
     def print_chain(self, result: dict):
+        """
+        Pretty-print a blockchain response to stdout.
+
+        Args:
+            result (dict): Response from GET /chain.
+        """
         chain = result.get('chain', [])
         height = result.get('height', 0)
         print(f"\n=== Blockchain (height={height}) ===")
@@ -66,6 +119,12 @@ class BlockchainClient:
         print()
 
     def print_mempool(self, result: dict):
+        """
+        Pretty-print a mempool response to stdout.
+
+        Args:
+            result (dict): Response from GET /mempool.
+        """
         pending = result.get('pending', [])
         print(f"\n=== Mempool ({len(pending)} pending) ===")
         for tx in pending:
@@ -73,6 +132,12 @@ class BlockchainClient:
         print()
 
     def print_peers(self, result: dict):
+        """
+        Pretty-print a peer list response to stdout.
+
+        Args:
+            result (dict): Response from GET /peers.
+        """
         peers = result.get('peers', [])
         print(f"\n=== Peers ({len(peers)}) ===")
         for peer in peers:

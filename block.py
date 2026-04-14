@@ -2,8 +2,6 @@ import hashlib
 import json
 import time
 
-#  Represents a single block in the NovaBlock chain.
-
 class Block:
     def __init__(self, index, transactions, previous_hash, nonce=0, timestamp=None):
         """
@@ -21,9 +19,7 @@ class Block:
         self.nonce         = nonce
         self.hash          = self.compute_hash()
 
-    # ------------------------------------------------------------------
     # Hashing
-    # ------------------------------------------------------------------
 
     def compute_hash(self):
         """
@@ -43,9 +39,7 @@ class Block:
         block_string = json.dumps(block_data, sort_keys=True)
         return hashlib.sha256(block_string.encode()).hexdigest()
 
-    # ------------------------------------------------------------------
     # Validation
-    # ------------------------------------------------------------------
 
     def is_valid(self, difficulty):
         """
@@ -71,9 +65,7 @@ class Block:
 
         return True
 
-    # ------------------------------------------------------------------
     # Serialisation helpers
-    # ------------------------------------------------------------------
 
     def to_dict(self):
         """Return a plain dict so the block can be JSON-serialised over HTTP."""

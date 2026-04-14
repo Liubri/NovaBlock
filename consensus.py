@@ -17,9 +17,7 @@ class Consensus:
         self.mempool    = mempool
         self.peers      = peers
 
-    # ------------------------------------------------------------------
     # Chain fetching
-    # ------------------------------------------------------------------
 
     def _fetch_chain(self, peer):
         """
@@ -40,9 +38,7 @@ class Consensus:
             print(f"[Consensus] Could not reach peer {peer}: {e}")
         return None
 
-    # ------------------------------------------------------------------
     # Fork resolution — longest-chain rule
-    # ------------------------------------------------------------------
 
     def resolve(self):
         """
@@ -100,9 +96,7 @@ class Consensus:
 
         return replaced
 
-    # ------------------------------------------------------------------
     # Block broadcast
-    # ------------------------------------------------------------------
 
     def broadcast_block(self, block):
         """

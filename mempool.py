@@ -14,9 +14,7 @@ class Mempool:
         """
         self._pool = {}   # { tx_id: transaction_dict }
 
-    # ------------------------------------------------------------------
     # Internal helpers
-    # ------------------------------------------------------------------
 
     def _tx_id(self, transaction):
         """
@@ -33,9 +31,7 @@ class Mempool:
         tx_string = json.dumps(transaction, sort_keys=True)
         return hashlib.sha256(tx_string.encode()).hexdigest()
 
-    # ------------------------------------------------------------------
     # Core operations
-    # ------------------------------------------------------------------
 
     def add(self, transaction):
         """
@@ -82,13 +78,11 @@ class Mempool:
         return list(self._pool.values())
 
     def clear(self):
-        """Wipe the entire mempool (used after chain replacement via consensus)."""
+        """Wipe the entire mempool"""
         self._pool.clear()
         print("[Mempool] Cleared.")
 
-    # ------------------------------------------------------------------
     # Broadcast
-    # ------------------------------------------------------------------
 
     def broadcast(self, transaction, peers):
         """
@@ -113,18 +107,14 @@ class Mempool:
             except requests.exceptions.RequestException as e:
                 print(f"[Mempool] Broadcast failed → {peer} ({e})")
 
-    # ------------------------------------------------------------------
     # Properties
-    # ------------------------------------------------------------------
 
     @property
     def size(self):
         """Return the number of pending transactions."""
         return len(self._pool)
 
-    # ------------------------------------------------------------------
     # Serialisation helpers
-    # ------------------------------------------------------------------
 
     def to_list(self):
         """Return pending transactions as a list of dicts for API responses."""

@@ -12,9 +12,7 @@ class Network:
         """
         self.peers = set()
 
-    # ------------------------------------------------------------------
     # Peer registration
-    # ------------------------------------------------------------------
 
     def register_peer(self, address):
         """
@@ -70,9 +68,7 @@ class Network:
             return True
         return False
 
-    # ------------------------------------------------------------------
     # Peer discovery — announce self to peers
-    # ------------------------------------------------------------------
 
     def announce(self, self_url):
         """
@@ -97,9 +93,7 @@ class Network:
             except requests.exceptions.RequestException as e:
                 print(f"[Network] Announce failed → {peer} ({e})")
 
-    # ------------------------------------------------------------------
     # Generic broadcast helpers
-    # ------------------------------------------------------------------
 
     def broadcast_get(self, endpoint):
         """
@@ -152,9 +146,7 @@ class Network:
                 print(f"[Network] POST {endpoint} failed → {peer} ({e})")
         return successes
 
-    # ------------------------------------------------------------------
     # Properties
-    # ------------------------------------------------------------------
 
     @property
     def peer_count(self):
@@ -165,9 +157,7 @@ class Network:
         """Return peers as a sorted list for consistent API responses."""
         return sorted(self.peers)
 
-    # ------------------------------------------------------------------
     # Specific broadcast methods for blocks and transactions
-    # ------------------------------------------------------------------
 
     def broadcast_block(self, block_dict):
         """

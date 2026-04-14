@@ -16,18 +16,14 @@ from network import Network
 
 app = Flask(__name__)
 
-# ------------------------------------------------------------------
 # Global state — one instance of each module per node process
-# ------------------------------------------------------------------
 blockchain = Blockchain()
 mempool    = Mempool()
 network    = Network()
 consensus  = Consensus(blockchain, mempool, network.peers)
 
 
-# ============================================================================
 # Chain endpoints
-# ============================================================================
 
 @app.route('/chain', methods=['GET'])
 def get_chain():
@@ -64,9 +60,7 @@ def receive_block():
         return jsonify({"error": "Block validation failed"}), 400
 
 
-# ============================================================================
 # Mining endpoint
-# ============================================================================
 
 @app.route('/mine', methods=['POST'])
 def mine():
@@ -86,9 +80,7 @@ def mine():
     return jsonify(new_block.to_dict()), 201
 
 
-# ============================================================================
 # Transaction endpoints
-# ============================================================================
 
 @app.route('/transactions/new', methods=['POST'])
 def new_transaction():
@@ -130,9 +122,7 @@ def get_mempool():
     }), 200
 
 
-# ============================================================================
 # Node / peer endpoints
-# ============================================================================
 
 @app.route('/nodes/register', methods=['POST'])
 def register_nodes():
@@ -189,9 +179,7 @@ def get_peers():
     }), 200
 
 
-# ============================================================================
 # Main
-# ============================================================================
 
 def main():
     parser = argparse.ArgumentParser(description="NovaBlock Node")
