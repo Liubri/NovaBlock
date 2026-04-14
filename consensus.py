@@ -6,12 +6,12 @@ from blockchain import Blockchain
 class Consensus:
     def __init__(self, blockchain, mempool, peers):
         """
-        Initialise the consensus engine.
+        Initialise the consensus engine
 
         Args:
-            blockchain (Blockchain): The local node's blockchain instance.
-            mempool    (Mempool):    The local node's mempool instance.
-            peers      (set):        Set of peer URLs e.g. {"http://localhost:5001"}.
+            blockchain (Blockchain): The local node's blockchain instance
+            mempool    (Mempool):    The local node's mempool instance
+            peers      (set):        Set of peer URLs ie. {"http://localhost:5001"}
         """
         self.blockchain = blockchain
         self.mempool    = mempool
@@ -21,13 +21,13 @@ class Consensus:
 
     def _fetch_chain(self, peer):
         """
-        Fetch and reconstruct the blockchain from a peer node.
+        Fetch and reconstruct the blockchain from a peer node
 
         Args:
-            peer (str): Base URL of the peer e.g. "http://localhost:5001".
+            peer (str): Base URL of the peer e.g. "http://localhost:5001"
 
         Returns:
-            Blockchain | None: Reconstructed Blockchain if successful, else None.
+            Blockchain | None: Reconstructed Blockchain if successful, else None
         """
         try:
             response = requests.get(f"{peer}/chain", timeout=5)
@@ -38,23 +38,16 @@ class Consensus:
             print(f"[Consensus] Could not reach peer {peer}: {e}")
         return None
 
-    # Fork resolution — longest-chain rule
+    # Fork resolution: longest-chain rule
 
     def resolve(self):
         """
         Query all known peers for their chains. If any peer has a longer
-        valid chain than ours, replace our local chain with it.
-
-        This implements the longest-chain consensus rule:
-          - Fetch chains from all peers.
-          - Validate each chain fully.
-          - Adopt the longest valid chain found, if longer than our own.
-          - If the chain is replaced, clear the mempool to avoid including
-            transactions that may already be in the adopted chain.
+        valid chain than ours, replace local chain with it
 
         Returns:
-            bool: True if our chain was replaced, False if ours was already
-                  the longest valid chain.
+            bool: True if chain was replaced or False if ours was already
+                  the longest valid chain
         """
         best_chain  = self.blockchain.chain
         best_length = self.blockchain.height
@@ -88,7 +81,7 @@ class Consensus:
 
         if replaced:
             self.blockchain.chain = best_chain
-            # Clear mempool — the adopted chain may already contain pending txns
+            # Clear mempool: the adopted chain may already contain pending txns
             self.mempool.clear()
             print("[Consensus] Local chain replaced. Mempool cleared.")
         else:
@@ -101,14 +94,13 @@ class Consensus:
     def broadcast_block(self, block):
         """
         Broadcast a newly mined block to all known peers via their
-        POST /blocks/new endpoint.
+        POST /blocks/new endpoint
 
         Peers validate the block independently on receipt. Unreachable
-        peers are logged and skipped — they will sync via /nodes/resolve
-        when they come back online.
+        peers are logged and skipped
 
         Args:
-            block (Block): The freshly mined block to broadcast.
+            block (Block): The mined block to broadcast
         """
         for peer in self.peers:
             url = f"{peer}/blocks/new"
