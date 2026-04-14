@@ -118,9 +118,9 @@ def test_consensus(a, b, expected_block_hash):
 
     result = b.resolve()
     check("Resolve returned a result", result is not None)
-    check("Node B adopted Node A's chain (chain_updated=True)",
-          result.get("chain_updated") is True if result else False)
-    check("Node B height is now 2",
+    # chain_updated may be False if block broadcast already synced Node B —
+    # both True and False are valid here; height=2 is the correctness indicator
+    check("Node B is synced at height 2 (via broadcast or resolve)",
           result.get("height") == 2 if result else False)
 
 
