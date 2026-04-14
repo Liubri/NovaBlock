@@ -16,7 +16,7 @@ from network import Network
 
 app = Flask(__name__)
 
-# Global state — one instance of each module per node process
+# Global state: one instance of each module per node process
 blockchain = Blockchain()
 mempool    = Mempool()
 network    = Network()
@@ -29,7 +29,7 @@ consensus  = Consensus(blockchain, mempool, network.peers)
 def get_chain():
     """
     GET /chain
-    Return the full blockchain as a list of block dicts.
+    Return the full blockchain as a list of block dicts
     """
     return jsonify({
         "chain":  blockchain.to_list(),
@@ -41,8 +41,8 @@ def get_chain():
 def receive_block():
     """
     POST /blocks/new
-    Receive a mined block broadcast from a peer.
-    Validate and append it if valid; remove its transactions from the mempool.
+    Receive a mined block broadcast from a peer
+    Validate and append it if valid, remove its transactions from the mempool
     """
     data = request.get_json()
     if not data:
@@ -66,8 +66,8 @@ def receive_block():
 def mine():
     """
     POST /mine
-    Mine all pending transactions from the mempool into a new block,
-    then broadcast the block to all known peers.
+    Mine all pending transactions from the mempool into a new block
+    then broadcast the block to all known peers
     """
     pending = mempool.get_all()
     if not pending:
@@ -86,7 +86,7 @@ def mine():
 def new_transaction():
     """
     POST /transactions/new
-    Accept a new transaction, add it to the mempool, and broadcast to peers.
+    Accept a new transaction, add it to the mempool, and broadcast to peers
     Request body: {"sender": "...", "recipient": "...", "amount": N}
     """
     data = request.get_json()
@@ -114,7 +114,7 @@ def new_transaction():
 def get_mempool():
     """
     GET /mempool
-    Return all pending transactions (useful for testing and debugging).
+    Return all pending transactions
     """
     return jsonify({
         "pending":      mempool.to_list(),
@@ -128,9 +128,9 @@ def get_mempool():
 def register_nodes():
     """
     POST /nodes/register
-    Register one or more peer nodes.
+    Register one or more peer nodes
     Request body: {"nodes": ["http://localhost:5001", ...]}
-    Returns the full current peer list so the caller can discover other peers.
+    Returns the full current peer list so the caller can discover other peers
     """
     data = request.get_json()
     if not data or "nodes" not in data:
@@ -154,8 +154,8 @@ def register_nodes():
 def resolve():
     """
     POST /nodes/resolve
-    Trigger the longest-chain consensus algorithm.
-    Fetches chains from all known peers and adopts the longest valid one.
+    Trigger the longest-chain consensus algorithm
+    Fetches chains from all known peers and adopts the longest valid one
     """
     replaced = consensus.resolve()
 
@@ -171,7 +171,7 @@ def resolve():
 def get_peers():
     """
     GET /peers
-    Return all known peer URLs (useful for testing and debugging).
+    Return all known peer URLs
     """
     return jsonify({
         "peers": network.peer_list(),
