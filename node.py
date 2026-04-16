@@ -183,15 +183,22 @@ def get_peers():
 
 def main():
     parser = argparse.ArgumentParser(description="NovaBlock Node")
-    parser.add_argument("--port",       type=int, default=5000,
+    parser.add_argument("--port",           type=int, default=5000,
                         help="Port to listen on (default: 5000)")
-    parser.add_argument("--host",       default="localhost",
-                        help="Host to bind to (default: localhost)")
+    parser.add_argument("--host",           default="0.0.0.0",
+                        help="Interface to bind to (default: 0.0.0.0 — all interfaces)")
+    parser.add_argument("--advertise-host", default=None,
+                        help="IP or hostname to advertise to peers. "
+                             "Required for cross-machine use (e.g. --advertise-host 192.168.1.10). "
+                             "Defaults to localhost for single-machine setups.")
     parser.add_argument("--seed-peers", nargs="*", default=[],
                         help="Space-separated seed peer URLs to register on startup")
     args = parser.parse_args()
 
-    self_url = f"http://{args.host}:{args.port}"
+    # Use the advertised host for peer announcements; fall back to localhost
+    # for single-machine setups where --advertise-host is not specified
+    advertise_host = args.advertise_host or "localhost"
+    self_url = f"http://{advertise_host}:{args.port}"
 
     # Register any seed peers provided at startup
     if args.seed_peers:
